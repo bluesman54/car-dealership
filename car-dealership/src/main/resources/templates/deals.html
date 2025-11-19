@@ -1,38 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Сделки - Автосалон</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .deal-card {
-            border-left: 4px solid #ffc107;
-            transition: all 0.3s ease;
-        }
-        .deal-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .price-badge {
-            font-size: 1.1em;
-            padding: 8px 12px;
-        }
-    </style>
 </head>
 <body>
-<!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="/">
             <i class="fas fa-car"></i> Автосалон
         </a>
         <div class="navbar-nav">
-            <a class="nav-link" href="/">Главная</a>
             <a class="nav-link" href="/cars">Автомобили</a>
             <a class="nav-link" href="/clients">Клиенты</a>
-            <a class="nav-link active" href="/deals">Сделки</a>
+            <a class="nav-link" href="/deals">Сделки</a>
         </div>
     </div>
 </nav>
@@ -40,21 +24,68 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1><i class="fas fa-handshake"></i> Управление сделками</h1>
-        <a href="/" class="btn btn-outline-primary">
-            <i class="fas fa-home"></i> На главную
-        </a>
+    </div>
+
+    <!-- Форма создания сделки -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Создать новую сделку</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/deals}" method="post">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Клиент *</label>
+                        <select class="form-select" name="client" required>
+                            <option value="">Выберите клиента</option>
+                            <option th:each="client : ${clients}"
+                                    th:value="${client.id}"
+                                    th:text="${client.firstName + ' ' + client.lastName + ' (' + client.phone + ')'}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Автомобиль *</label>
+                        <select class="form-select" name="car" required>
+                            <option value="">Выберите автомобиль</option>
+                            <option th:each="car : ${availableCars}"
+                                    th:value="${car.id}"
+                                    th:text="${car.brand + ' ' + car.model + ' ' + car.year + ' - ' + #numbers.formatDecimal(car.price, 0, 'COMMA', 2, 'POINT') + '₽'}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Менеджер *</label>
+                        <select class="form-select" name="manager" required>
+                            <option value="">Выберите менеджера</option>
+                            <option th:each="manager : ${managers}"
+                                    th:value="${manager.id}"
+                                    th:text="${manager.login}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Поле цены продажи удалено из формы -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Создать сделку
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Список сделок -->
     <div class="card">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0"><i class="fas fa-list"></i> История сделок</h5>
+        <div class="card-header">
+            <h5 class="mb-0">Список сделок</h5>
         </div>
         <div class="card-body">
-            <!-- Таблица сделок -->
-            <div th:if="${not deals.empty}" class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-warning">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
                     <tr>
                         <th>ID</th>
                         <th>Клиент</th>
@@ -66,68 +97,30 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="deal : ${deals}" class="align-middle">
+                    <tr th:each="deal : ${deals}">
+                        <td th:text="${deal.id}"></td>
+                        <td th:text="${deal.client.firstName + ' ' + deal.client.lastName}"></td>
+                        <td th:text="${deal.car.brand + ' ' + deal.car.model + ' (' + deal.car.year + ')'}"></td>
+                        <td th:text="${deal.manager.login}"></td>
+                        <td th:text="${#numbers.formatDecimal(deal.salePrice, 0, 'COMMA', 2, 'POINT') + ' ₽'}"></td>
+                        <td th:text="${#temporals.format(deal.dealDate, 'dd.MM.yyyy HH:mm')}"></td>
                         <td>
-                            <strong th:text="${deal.id}"></strong>
-                        </td>
-                        <td>
-                            <div class="fw-bold" th:text="${deal.client.firstName + ' ' + deal.client.lastName}"></div>
-                            <small class="text-muted" th:text="${deal.client.phone}"></small>
-                            <br>
-                            <small class="text-muted" th:text="${deal.client.email ?: 'нет email'}"></small>
-                        </td>
-                        <td>
-                            <div class="fw-bold" th:text="${deal.car.brand + ' ' + deal.car.model}"></div>
-                            <small class="text-muted" th:text="${deal.car.year + ' год, ' + deal.car.color}"></small>
-                            <br>
-                            <small class="text-muted">VIN: <span th:text="${deal.car.vin}"></span></small>
-                        </td>
-                        <td>
-                            <span class="badge bg-secondary" th:text="${deal.manager.login}"></span>
-                        </td>
-                        <td>
-                            <span class="badge bg-success price-badge" th:text="${deal.salePrice + ' ₽'}"></span>
-                            <br>
-                            <small class="text-muted" th:if="${deal.car.price != deal.salePrice}">
-                                Исходная: <span th:text="${deal.car.price + ' ₽'}"></span>
-                            </small>
-                        </td>
-                        <td>
-                            <span th:text="${#dates.format(deal.dealDate, 'dd.MM.yyyy HH:mm')}"></span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-danger"
-                                    th:onclick="'deleteDeal(' + ${deal.id} + ')'"
-                                    title="Удалить сделку">
-                                <i class="fas fa-trash"></i> Удалить
-                            </button>
+                            <a th:href="@{/deals/delete/{id}(id=${deal.id})}" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Удалить эту сделку?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-
-            <!-- Сообщение если сделок нет -->
-            <div th:if="${deals.empty}" class="text-center py-5">
-                <div class="text-muted">
-                    <i class="fas fa-handshake fa-3x mb-3"></i>
-                    <h4>Пока нет сделок</h4>
-                    <p>Создайте первую сделку, используя форму выше</p>
-                </div>
+            <div th:if="${#lists.isEmpty(deals)}" class="text-center text-muted">
+                <i class="fas fa-info-circle"></i> Нет сделок в базе данных
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    // Функция для подтверждения удаления сделки
-    function deleteDeal(dealId) {
-        if (confirm('Вы уверены, что хотите удалить эту сделку?\n\nАвтомобиль снова станет доступным для продажи.')) {
-            window.location.href = '/deals/delete/' + dealId;
-        }
-    }
-</script>
 </body>
 </html>

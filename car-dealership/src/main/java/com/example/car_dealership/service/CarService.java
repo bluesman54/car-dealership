@@ -39,6 +39,12 @@ public class CarService {
         if (carRepository.existsByVin(car.getVin())) {
             throw new RuntimeException("Car with VIN " + car.getVin() + " already exists");
         }
+
+        // Убедимся, что статус установлен (на случай, если не установлен в контроллере)
+        if (car.getStatus() == null) {
+            car.setStatus(Car.CarStatus.AVAILABLE);
+        }
+
         return carRepository.save(car);
     }
 
@@ -50,6 +56,7 @@ public class CarService {
         existingCar.setYear(car.getYear());
         existingCar.setColor(car.getColor());
         existingCar.setPrice(car.getPrice());
+        // Статус не обновляем при обычном редактировании - он меняется только при продаже
         return carRepository.save(existingCar);
     }
 

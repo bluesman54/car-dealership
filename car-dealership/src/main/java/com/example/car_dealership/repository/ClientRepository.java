@@ -11,9 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
-    Optional<Client> findByPhone(String phone);
-    Optional<Client> findByEmail(String email);
 
-    @Query("SELECT c FROM Client c WHERE LOWER(c.firstName) LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :name, '%'))")
+    @Query("SELECT c FROM Client c WHERE LOWER(c.firstName)" +
+            " LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<Client> findByFirstNameOrLastNameContaining(@Param("name") String name);
 }

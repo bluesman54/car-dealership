@@ -37,6 +37,8 @@ public class CarController {
     // Добавление нового автомобиля (обработка формы)
     @PostMapping
     public String addCar(@ModelAttribute Car car) {
+        // Устанавливаем статус "Доступен" по умолчанию
+        car.setStatus(Car.CarStatus.AVAILABLE);
         carService.save(car);
         return "redirect:/cars";
     }
@@ -52,6 +54,9 @@ public class CarController {
     // Обновление автомобиля
     @PostMapping("/update/{id}")
     public String updateCar(@PathVariable Long id, @ModelAttribute Car car) {
+        // Сохраняем текущий статус при обновлении
+        Car existingCar = carService.findById(id);
+        car.setStatus(existingCar.getStatus());
         carService.update(id, car);
         return "redirect:/cars";
     }

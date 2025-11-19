@@ -32,7 +32,6 @@ public class DealController {
         model.addAttribute("deals", deals);
 
         // Данные для формы добавления
-        model.addAttribute("deal", new Deal());
         model.addAttribute("availableCars", carService.findAvailable());
         model.addAttribute("clients", clientService.findAll());
         model.addAttribute("managers", userService.findAll());
@@ -42,9 +41,28 @@ public class DealController {
 
     // Создание новой сделки
     @PostMapping
-    public String createDeal(@ModelAttribute Deal deal) {
-        dealService.createDeal(deal);
-        return "redirect:/deals";
+    public String createDeal(@RequestParam("client") Long clientId,
+                             @RequestParam("car") Long carId,
+                             @RequestParam("manager") Long managerId) {
+        try {
+            // Получаем объекты из базы данных
+            Client client = clientService.findById(clientId);
+            Car car = carService.findById(carId);
+            User manager = userService.findById(managerId);
+
+            // Создаем сделку и устанавливаем цену продажи равной цене автомобиля
+            Deal deal = Deal.builder()
+                    .client(client)
+                    .car(car)
+                    .manager(manager)
+                    .salePrice(car.getPrice()) // Автоматически устанавливаем цену автомобиля
+                    .build();
+
+            dealService.createDeal(deal);
+            return "redirect:/deals?success";
+        } catch (Exception e) {
+            return "redirect:/deals?error=" + e.getMessage();
+        }
     }
 
     // Удаление сделки

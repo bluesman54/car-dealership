@@ -21,8 +21,7 @@ public class User {
 
     private String password;
 
-    @Builder.Default
-    private String role = "USER";
+    private String role;
 
     @CreationTimestamp
     @Column(name = "created_at")
