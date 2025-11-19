@@ -1,5 +1,6 @@
 package com.example.car_dealership.entity;
 
+import com.example.car_dealership.enums.CarStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,15 +33,10 @@ public class Car {
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private CarStatus status = CarStatus.AVAILABLE;
+    private CarStatus status;
 
     @CreationTimestamp
     @Column(name = "arrival_date")
     private LocalDate arrivalDate;
 
-    public enum CarStatus {
-        AVAILABLE, // не продано
-        SOLD       // продано
-    }
 }

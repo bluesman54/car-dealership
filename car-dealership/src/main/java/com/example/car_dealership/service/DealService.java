@@ -1,6 +1,7 @@
 package com.example.car_dealership.service;
 
 import com.example.car_dealership.entity.*;
+import com.example.car_dealership.enums.CarStatus;
 import com.example.car_dealership.repository.DealRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,18 +24,13 @@ public class DealService {
         return dealRepository.findAll();
     }
 
-    public Deal findById(Long id) {
-        return dealRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Deal not found with id: " + id));
-    }
-
     @Transactional
     public Deal createDeal(Deal deal) {
         Client client = clientService.findById(deal.getClient().getId());
         Car car = carService.findById(deal.getCar().getId());
         User manager = userService.findById(deal.getManager().getId());
 
-        if (car.getStatus() != Car.CarStatus.AVAILABLE) {
+        if (car.getStatus() != CarStatus.AVAILABLE) {
             throw new RuntimeException("Car is not available for sale");
         }
 
@@ -42,7 +38,6 @@ public class DealService {
         deal.setCar(car);
         deal.setManager(manager);
 
-        // Помечаем автомобиль как проданный
         carService.markAsSold(car.getId());
 
         Deal savedDeal = dealRepository.save(deal);

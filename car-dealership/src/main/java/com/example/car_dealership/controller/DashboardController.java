@@ -18,26 +18,11 @@ public class DashboardController {
 
     @GetMapping("/")
     public String dashboard(Model model) {
-        // Статистика для дашборда
+
         model.addAttribute("totalCars", carService.findAll().size());
         model.addAttribute("availableCars", carService.findAvailable().size());
         model.addAttribute("totalClients", clientService.findAll().size());
         model.addAttribute("totalDeals", dealService.findAll().size());
-
-        // Последние 5 автомобилей
-        model.addAttribute("recentCars", carService.findAll().stream()
-                .limit(5)
-                .toList());
-
-        // Последние 5 клиентов
-        model.addAttribute("recentClients", clientService.findAll().stream()
-                .limit(5)
-                .toList());
-
-        // Последние 5 сделок
-        model.addAttribute("recentDeals", dealService.findAll().stream()
-                .limit(5)
-                .toList());
 
         return "dashboard";
     }

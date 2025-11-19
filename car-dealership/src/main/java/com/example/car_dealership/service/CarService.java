@@ -1,6 +1,7 @@
 package com.example.car_dealership.service;
 
 import com.example.car_dealership.entity.Car;
+import com.example.car_dealership.enums.CarStatus;
 import com.example.car_dealership.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class CarService {
     }
 
     public List<Car> findAvailable() {
-        return carRepository.findByStatus(Car.CarStatus.AVAILABLE);
+        return carRepository.findByStatus(CarStatus.AVAILABLE);
     }
 
     public Car findById(Long id) {
@@ -29,20 +30,13 @@ public class CarService {
                 .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
     }
 
-    public Car findByVin(String vin) {
-        return carRepository.findByVin(vin)
-                .orElseThrow(() -> new RuntimeException("Car not found with VIN: " + vin));
-    }
-
     @Transactional
     public Car save(Car car) {
         if (carRepository.existsByVin(car.getVin())) {
             throw new RuntimeException("Car with VIN " + car.getVin() + " already exists");
         }
-
-        // Убедимся, что статус установлен (на случай, если не установлен в контроллере)
         if (car.getStatus() == null) {
-            car.setStatus(Car.CarStatus.AVAILABLE);
+            car.setStatus(CarStatus.AVAILABLE);
         }
 
         return carRepository.save(car);
@@ -56,13 +50,13 @@ public class CarService {
         existingCar.setYear(car.getYear());
         existingCar.setColor(car.getColor());
         existingCar.setPrice(car.getPrice());
-        // Статус не обновляем при обычном редактировании - он меняется только при продаже
+
         return carRepository.save(existingCar);
     }
 
     @Transactional
     public void markAsSold(Long id) {
-        carRepository.updateStatus(id, Car.CarStatus.SOLD);
+        carRepository.updateStatus(id, CarStatus.SOLD);
         log.info("Car {} marked as SOLD", id);
     }
 

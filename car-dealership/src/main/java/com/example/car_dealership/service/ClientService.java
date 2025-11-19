@@ -23,10 +23,6 @@ public class ClientService {
                 .orElseThrow(() -> new RuntimeException("Client not found with id: " + id));
     }
 
-    public List<Client> searchByName(String name) {
-        return clientRepository.findByFirstNameOrLastNameContaining(name);
-    }
-
     @Transactional
     public Client save(Client client) {
         return clientRepository.save(client);

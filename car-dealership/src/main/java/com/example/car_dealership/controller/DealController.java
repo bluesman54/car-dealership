@@ -25,13 +25,11 @@ public class DealController {
     private final ClientService clientService;
     private final UserService userService;
 
-    // Страница со списком всех сделок
     @GetMapping
     public String listDeals(Model model) {
         List<Deal> deals = dealService.findAll();
         model.addAttribute("deals", deals);
 
-        // Данные для формы добавления
         model.addAttribute("availableCars", carService.findAvailable());
         model.addAttribute("clients", clientService.findAll());
         model.addAttribute("managers", userService.findAll());
@@ -39,23 +37,20 @@ public class DealController {
         return "deals";
     }
 
-    // Создание новой сделки
     @PostMapping
     public String createDeal(@RequestParam("client") Long clientId,
                              @RequestParam("car") Long carId,
                              @RequestParam("manager") Long managerId) {
         try {
-            // Получаем объекты из базы данных
             Client client = clientService.findById(clientId);
             Car car = carService.findById(carId);
             User manager = userService.findById(managerId);
 
-            // Создаем сделку и устанавливаем цену продажи равной цене автомобиля
             Deal deal = Deal.builder()
                     .client(client)
                     .car(car)
                     .manager(manager)
-                    .salePrice(car.getPrice()) // Автоматически устанавливаем цену автомобиля
+                    .salePrice(car.getPrice())
                     .build();
 
             dealService.createDeal(deal);
@@ -65,7 +60,6 @@ public class DealController {
         }
     }
 
-    // Удаление сделки
     @GetMapping("/delete/{id}")
     public String deleteDeal(@PathVariable Long id) {
         dealService.delete(id);
