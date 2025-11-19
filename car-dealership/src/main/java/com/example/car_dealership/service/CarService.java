@@ -61,6 +61,12 @@ public class CarService {
     }
 
     @Transactional
+    public void markAsAvailable(Long id) {
+        carRepository.updateStatus(id, CarStatus.AVAILABLE);
+        log.info("Car {} marked as AVAILABLE", id);
+    }
+
+    @Transactional
     public void delete(Long id) {
         carRepository.deleteById(id);
     }

@@ -48,6 +48,11 @@ public class DealService {
 
     @Transactional
     public void delete(Long id) {
+        Deal deal = dealRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Deal not found with id: " + id));
+        Car car = deal.getCar();
+
+        carService.markAsAvailable(car.getId());
         dealRepository.deleteById(id);
     }
 }
