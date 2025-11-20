@@ -27,13 +27,13 @@ public class CarService {
 
     public Car findById(Long id) {
         return carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Машина не найдена с id: " + id));
     }
 
     @Transactional
     public Car save(Car car) {
         if (carRepository.existsByVin(car.getVin())) {
-            throw new RuntimeException("Car with VIN " + car.getVin() + " already exists");
+            throw new RuntimeException("Машина с VIN " + car.getVin() + " уже существует");
         }
         return carRepository.save(car);
     }
@@ -53,13 +53,13 @@ public class CarService {
     @Transactional
     public void markAsSold(Long id) {
         carRepository.updateStatus(id, CarStatus.SOLD);
-        log.info("Car {} marked as SOLD", id);
+        log.info("Машина {} помечена как SOLD", id);
     }
 
     @Transactional
     public void markAsAvailable(Long id) {
         carRepository.updateStatus(id, CarStatus.AVAILABLE);
-        log.info("Car {} marked as AVAILABLE", id);
+        log.info("Машина {} помечена как AVAILABLE", id);
     }
 
     @Transactional

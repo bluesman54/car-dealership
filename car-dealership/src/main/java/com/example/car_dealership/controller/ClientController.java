@@ -25,7 +25,7 @@ public class ClientController {
     }
 
     @PostMapping
-    public String addClient(@ModelAttribute Client client) {
+    public String addClient(Client client) {
         clientService.save(client);
         return "redirect:/clients";
     }
@@ -38,7 +38,7 @@ public class ClientController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateClient(@PathVariable Long id, @ModelAttribute Client client) {
+    public String updateClient(@PathVariable Long id, Client client) {
         clientService.update(id, client);
         return "redirect:/clients";
     }

@@ -31,7 +31,7 @@ public class UserService {
     @Transactional
     public User save(User user) {
         if (userRepository.existsByLogin(user.getLogin())) {
-            throw new RuntimeException("User with login " + user.getLogin() + " already exists");
+            throw new RuntimeException("Логин " + user.getLogin() + " уже существует");
         }
         return userRepository.save(user);
     }

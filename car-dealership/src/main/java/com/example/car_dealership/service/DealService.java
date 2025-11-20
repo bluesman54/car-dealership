@@ -40,14 +40,14 @@ public class DealService {
         User manager = userService.findById(managerId);
 
         if (car.getStatus() != CarStatus.AVAILABLE) {
-            throw new RuntimeException("Car is not available for sale");
+            throw new RuntimeException("Недоступно для продажи");
         }
 
         Deal deal = buildDeal(client, car,manager);
         carService.markAsSold(car.getId());
 
         Deal savedDeal = dealRepository.save(deal);
-        log.info("Created deal {} for client {} and car {}", savedDeal.getId(), client.getId(), car.getId());
+        log.info("Создана сделка {} клиентом {} на машину {}", savedDeal.getId(), client.getId(), car.getId());
 
         return savedDeal;
     }
@@ -55,7 +55,7 @@ public class DealService {
     @Transactional
     public void delete(Long id) {
         Deal deal = dealRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Deal not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Сделка не найдена: " + id));
         Car car = deal.getCar();
 
         carService.markAsAvailable(car.getId());

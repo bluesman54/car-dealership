@@ -20,7 +20,7 @@ public class ClientService {
 
     public Client findById(Long id) {
         return clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Клиент не найден с id: " + id));
     }
 
     @Transactional

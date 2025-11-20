@@ -34,7 +34,7 @@ public class CarController {
     }
 
     @PostMapping
-    public String addCar(@ModelAttribute Car car) {
+    public String addCar(Car car) {
 
         car.setStatus(CarStatus.AVAILABLE);
         carService.save(car);
@@ -49,7 +49,7 @@ public class CarController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateCar(@PathVariable Long id, @ModelAttribute Car car) {
+    public String updateCar(@PathVariable Long id, Car car) {
 
         Car existingCar = carService.findById(id);
         car.setStatus(existingCar.getStatus());
