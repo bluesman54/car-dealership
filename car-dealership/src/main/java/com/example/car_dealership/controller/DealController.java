@@ -1,9 +1,5 @@
 package com.example.car_dealership.controller;
 
-import com.example.car_dealership.entity.Car;
-import com.example.car_dealership.entity.Client;
-import com.example.car_dealership.entity.Deal;
-import com.example.car_dealership.entity.User;
 import com.example.car_dealership.service.CarService;
 import com.example.car_dealership.service.ClientService;
 import com.example.car_dealership.service.DealService;
@@ -12,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/deals")
@@ -27,9 +21,7 @@ public class DealController {
 
     @GetMapping
     public String listDeals(Model model) {
-        List<Deal> deals = dealService.findAll();
-        model.addAttribute("deals", deals);
-
+        model.addAttribute("deals", dealService.findAll());
         model.addAttribute("availableCars", carService.findAvailable());
         model.addAttribute("clients", clientService.findAll());
         model.addAttribute("managers", userService.findAll());
@@ -41,23 +33,8 @@ public class DealController {
     public String createDeal(@RequestParam("client") Long clientId,
                              @RequestParam("car") Long carId,
                              @RequestParam("manager") Long managerId) {
-        try {
-            Client client = clientService.findById(clientId);
-            Car car = carService.findById(carId);
-            User manager = userService.findById(managerId);
-
-            Deal deal = Deal.builder()
-                    .client(client)
-                    .car(car)
-                    .manager(manager)
-                    .salePrice(car.getPrice())
-                    .build();
-
-            dealService.createDeal(deal);
-            return "redirect:/deals?success";
-        } catch (Exception e) {
-            return "redirect:/deals?error=" + e.getMessage();
-        }
+        dealService.createDeal(clientId, carId, managerId);
+        return "redirect:/deals";
     }
 
     @GetMapping("/delete/{id}")

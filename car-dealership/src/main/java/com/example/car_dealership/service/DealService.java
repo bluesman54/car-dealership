@@ -24,20 +24,26 @@ public class DealService {
         return dealRepository.findAll();
     }
 
+    private Deal buildDeal(Client client, Car car, User manager) {
+        return Deal.builder()
+                .client(client)
+                .car(car)
+                .manager(manager)
+                .salePrice(car.getPrice())
+                .build();
+    }
+
     @Transactional
-    public Deal createDeal(Deal deal) {
-        Client client = clientService.findById(deal.getClient().getId());
-        Car car = carService.findById(deal.getCar().getId());
-        User manager = userService.findById(deal.getManager().getId());
+    public Deal createDeal(Long clientId, Long carId, Long managerId) {
+        Client client = clientService.findById(clientId);
+        Car car = carService.findById(carId);
+        User manager = userService.findById(managerId);
 
         if (car.getStatus() != CarStatus.AVAILABLE) {
             throw new RuntimeException("Car is not available for sale");
         }
 
-        deal.setClient(client);
-        deal.setCar(car);
-        deal.setManager(manager);
-
+        Deal deal = buildDeal(client, car,manager);
         carService.markAsSold(car.getId());
 
         Deal savedDeal = dealRepository.save(deal);

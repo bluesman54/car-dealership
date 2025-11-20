@@ -35,10 +35,6 @@ public class CarService {
         if (carRepository.existsByVin(car.getVin())) {
             throw new RuntimeException("Car with VIN " + car.getVin() + " already exists");
         }
-        if (car.getStatus() == null) {
-            car.setStatus(CarStatus.AVAILABLE);
-        }
-
         return carRepository.save(car);
     }
 
