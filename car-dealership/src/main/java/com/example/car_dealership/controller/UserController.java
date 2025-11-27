@@ -1,7 +1,7 @@
 package com.example.car_dealership.controller;
 
 import com.example.car_dealership.entity.User;
-import com.example.car_dealership.service.UserService;
+import com.example.car_dealership.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {

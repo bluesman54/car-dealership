@@ -21,7 +21,7 @@ public class CarController {
     public String listCars(Model model) {
         List<Car> cars = carService.findAll();
         model.addAttribute("cars", cars);
-        model.addAttribute("car", new Car()); // Для формы добавления
+        model.addAttribute("car", new Car());
         return "cars";
     }
 

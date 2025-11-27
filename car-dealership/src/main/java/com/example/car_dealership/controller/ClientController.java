@@ -1,7 +1,7 @@
 package com.example.car_dealership.controller;
 
 import com.example.car_dealership.entity.Client;
-import com.example.car_dealership.service.ClientService;
+import com.example.car_dealership.service.impl.ClientServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClientController {
 
-    private final ClientService clientService;
+    private final ClientServiceImpl clientService;
 
     @GetMapping
     public String listClients(Model model) {
